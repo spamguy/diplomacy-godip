@@ -1,0 +1,35 @@
+{
+  "name": "diplomacy-godip",
+  "version": "1.0.0",
+  "description": "A JavaScript interpretation of the godip Diplomacy adjudicator",
+  "main": "godip.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "byline": "4.2.1",
+    "chai": "3.0.0",
+    "mocha": "2.3.3"
+  },
+  "dependencies": {
+    "lodash": "3.10.1",
+    "subclass-error": "0.1.1"
+  },
+  "scripts": {
+    "test": "mocha test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spamguy/diplomacy-godip.git"
+  },
+  "keywords": [
+    "Diplomacy"
+  ],
+  "author": "Will Oram",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spamguy/diplomacy-godip/issues"
+  },
+  "homepage": "https://github.com/spamguy/diplomacy-godip#readme"
+}
