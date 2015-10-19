@@ -2012,7 +2012,7 @@ var $internalize = function(v, t, recv) {
 };
 
 $packages["github.com/gopherjs/gopherjs/js"] = (function() {
-	var $pkg = {}, $init, Object, Error, S, sliceType, ptrType, sliceType$2, funcType, ptrType$1, MakeWrapper, init;
+	var $pkg = {}, $init, Object, Error, sliceType, ptrType, ptrType$1, init;
 	Object = $pkg.Object = $newType(0, $kindStruct, "js.Object", "Object", "github.com/gopherjs/gopherjs/js", function(object_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -2029,11 +2029,8 @@ $packages["github.com/gopherjs/gopherjs/js"] = (function() {
 		}
 		this.Object = Object_;
 	});
-	S = $pkg.S = $newType(12, $kindSlice, "js.S", "S", "github.com/gopherjs/gopherjs/js", null);
 	sliceType = $sliceType($emptyInterface);
 	ptrType = $ptrType(Object);
-	sliceType$2 = $sliceType(ptrType);
-	funcType = $funcType([sliceType$2], [ptrType], true);
 	ptrType$1 = $ptrType(Error);
 	Object.ptr.prototype.Get = function(key) {
 		var $ptr, key, o;
@@ -2149,29 +2146,6 @@ $packages["github.com/gopherjs/gopherjs/js"] = (function() {
 		return $internalize(err.Object.stack, $String);
 	};
 	Error.prototype.Stack = function() { return this.$val.Stack(); };
-	MakeWrapper = function(i) {
-		var $ptr, i, i$1, m, methods, o, v;
-		v = i;
-		o = new ($global.Object)();
-		methods = v.constructor.methods;
-		i$1 = 0;
-		while (true) {
-			if (!(i$1 < $parseInt(methods.length))) { break; }
-			m = [m];
-			m[0] = methods[i$1];
-			if (!($internalize(m[0].pkg, $String) === "")) {
-				i$1 = i$1 + (1) >> 0;
-				continue;
-			}
-			o[$externalize($internalize(m[0].name, $String), $String)] = $externalize((function(m) { return function(args) {
-				var $ptr, args;
-				return $externalizeFunction(v[$externalize($internalize(m[0].prop, $String), $String)], m[0].typ, $externalize(true, $Bool)).apply(v, $externalize(args, sliceType$2));
-			}; })(m), funcType);
-			i$1 = i$1 + (1) >> 0;
-		}
-		return o;
-	};
-	$pkg.MakeWrapper = MakeWrapper;
 	init = function() {
 		var $ptr, e;
 		e = new Error.ptr(null);
@@ -2180,7 +2154,6 @@ $packages["github.com/gopherjs/gopherjs/js"] = (function() {
 	ptrType$1.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Stack", name: "Stack", pkg: "", typ: $funcType([], [$String], false)}];
 	Object.init([{prop: "object", name: "object", pkg: "github.com/gopherjs/gopherjs/js", typ: ptrType, tag: ""}]);
 	Error.init([{prop: "Object", name: "", pkg: "", typ: ptrType, tag: ""}]);
-	S.init($emptyInterface);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -21032,7 +21005,7 @@ $packages["encoding/json"] = (function() {
 	$pkg.$init = $init;
 	return $pkg;
 })();
-$packages["github.com/spamguy/godip/common"] = (function() {
+$packages["github.com/zond/godip/common"] = (function() {
 	var $pkg = {}, $init, bytes, json, fmt, reflect, strings, time, UnitType, Nation, OrderType, PhaseType, Province, Season, Unit, Phase, PathFilter, Flag, Graph, OptionValue, Options, Order, Adjudicator, BackupRule, StateFilter, Validator, Resolver, State, sliceType, sliceType$1, arrayType, arrayType$1, sliceType$2, mapType, ptrType, ptrType$1, mapType$1, sliceType$3, mapType$2, mapType$3, sliceType$4, sliceType$5, mapType$4, mapType$5, mapType$6, logBuffer, Indent, DeIndent, Logf;
 	bytes = $packages["bytes"];
 	json = $packages["encoding/json"];
@@ -21040,13 +21013,13 @@ $packages["github.com/spamguy/godip/common"] = (function() {
 	reflect = $packages["reflect"];
 	strings = $packages["strings"];
 	time = $packages["time"];
-	UnitType = $pkg.UnitType = $newType(8, $kindString, "common.UnitType", "UnitType", "github.com/spamguy/godip/common", null);
-	Nation = $pkg.Nation = $newType(8, $kindString, "common.Nation", "Nation", "github.com/spamguy/godip/common", null);
-	OrderType = $pkg.OrderType = $newType(8, $kindString, "common.OrderType", "OrderType", "github.com/spamguy/godip/common", null);
-	PhaseType = $pkg.PhaseType = $newType(8, $kindString, "common.PhaseType", "PhaseType", "github.com/spamguy/godip/common", null);
-	Province = $pkg.Province = $newType(8, $kindString, "common.Province", "Province", "github.com/spamguy/godip/common", null);
-	Season = $pkg.Season = $newType(8, $kindString, "common.Season", "Season", "github.com/spamguy/godip/common", null);
-	Unit = $pkg.Unit = $newType(0, $kindStruct, "common.Unit", "Unit", "github.com/spamguy/godip/common", function(Type_, Nation_) {
+	UnitType = $pkg.UnitType = $newType(8, $kindString, "common.UnitType", "UnitType", "github.com/zond/godip/common", null);
+	Nation = $pkg.Nation = $newType(8, $kindString, "common.Nation", "Nation", "github.com/zond/godip/common", null);
+	OrderType = $pkg.OrderType = $newType(8, $kindString, "common.OrderType", "OrderType", "github.com/zond/godip/common", null);
+	PhaseType = $pkg.PhaseType = $newType(8, $kindString, "common.PhaseType", "PhaseType", "github.com/zond/godip/common", null);
+	Province = $pkg.Province = $newType(8, $kindString, "common.Province", "Province", "github.com/zond/godip/common", null);
+	Season = $pkg.Season = $newType(8, $kindString, "common.Season", "Season", "github.com/zond/godip/common", null);
+	Unit = $pkg.Unit = $newType(0, $kindStruct, "common.Unit", "Unit", "github.com/zond/godip/common", function(Type_, Nation_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Type = "";
@@ -21056,19 +21029,19 @@ $packages["github.com/spamguy/godip/common"] = (function() {
 		this.Type = Type_;
 		this.Nation = Nation_;
 	});
-	Phase = $pkg.Phase = $newType(8, $kindInterface, "common.Phase", "Phase", "github.com/spamguy/godip/common", null);
-	PathFilter = $pkg.PathFilter = $newType(4, $kindFunc, "common.PathFilter", "PathFilter", "github.com/spamguy/godip/common", null);
-	Flag = $pkg.Flag = $newType(8, $kindString, "common.Flag", "Flag", "github.com/spamguy/godip/common", null);
-	Graph = $pkg.Graph = $newType(8, $kindInterface, "common.Graph", "Graph", "github.com/spamguy/godip/common", null);
-	OptionValue = $pkg.OptionValue = $newType(8, $kindInterface, "common.OptionValue", "OptionValue", "github.com/spamguy/godip/common", null);
-	Options = $pkg.Options = $newType(4, $kindMap, "common.Options", "Options", "github.com/spamguy/godip/common", null);
-	Order = $pkg.Order = $newType(8, $kindInterface, "common.Order", "Order", "github.com/spamguy/godip/common", null);
-	Adjudicator = $pkg.Adjudicator = $newType(8, $kindInterface, "common.Adjudicator", "Adjudicator", "github.com/spamguy/godip/common", null);
-	BackupRule = $pkg.BackupRule = $newType(4, $kindFunc, "common.BackupRule", "BackupRule", "github.com/spamguy/godip/common", null);
-	StateFilter = $pkg.StateFilter = $newType(4, $kindFunc, "common.StateFilter", "StateFilter", "github.com/spamguy/godip/common", null);
-	Validator = $pkg.Validator = $newType(8, $kindInterface, "common.Validator", "Validator", "github.com/spamguy/godip/common", null);
-	Resolver = $pkg.Resolver = $newType(8, $kindInterface, "common.Resolver", "Resolver", "github.com/spamguy/godip/common", null);
-	State = $pkg.State = $newType(8, $kindInterface, "common.State", "State", "github.com/spamguy/godip/common", null);
+	Phase = $pkg.Phase = $newType(8, $kindInterface, "common.Phase", "Phase", "github.com/zond/godip/common", null);
+	PathFilter = $pkg.PathFilter = $newType(4, $kindFunc, "common.PathFilter", "PathFilter", "github.com/zond/godip/common", null);
+	Flag = $pkg.Flag = $newType(8, $kindString, "common.Flag", "Flag", "github.com/zond/godip/common", null);
+	Graph = $pkg.Graph = $newType(8, $kindInterface, "common.Graph", "Graph", "github.com/zond/godip/common", null);
+	OptionValue = $pkg.OptionValue = $newType(8, $kindInterface, "common.OptionValue", "OptionValue", "github.com/zond/godip/common", null);
+	Options = $pkg.Options = $newType(4, $kindMap, "common.Options", "Options", "github.com/zond/godip/common", null);
+	Order = $pkg.Order = $newType(8, $kindInterface, "common.Order", "Order", "github.com/zond/godip/common", null);
+	Adjudicator = $pkg.Adjudicator = $newType(8, $kindInterface, "common.Adjudicator", "Adjudicator", "github.com/zond/godip/common", null);
+	BackupRule = $pkg.BackupRule = $newType(4, $kindFunc, "common.BackupRule", "BackupRule", "github.com/zond/godip/common", null);
+	StateFilter = $pkg.StateFilter = $newType(4, $kindFunc, "common.StateFilter", "StateFilter", "github.com/zond/godip/common", null);
+	Validator = $pkg.Validator = $newType(8, $kindInterface, "common.Validator", "Validator", "github.com/zond/godip/common", null);
+	Resolver = $pkg.Resolver = $newType(8, $kindInterface, "common.Resolver", "Resolver", "github.com/zond/godip/common", null);
+	State = $pkg.State = $newType(8, $kindInterface, "common.State", "State", "github.com/zond/godip/common", null);
 	sliceType = $sliceType($String);
 	sliceType$1 = $sliceType($Uint8);
 	arrayType = $arrayType($Uint8, 4);
@@ -21254,7 +21227,7 @@ $packages["github.com/spamguy/godip/graph"] = (function() {
 	var $pkg = {}, $init, bytes, fmt, common, Graph, pathStep, node, edge, subNode, sliceType, arrayType, arrayType$1, sliceType$1, ptrType, ptrType$1, ptrType$2, sliceType$2, sliceType$3, ptrType$3, sliceType$4, sliceType$5, mapType, mapType$1, ptrType$4, mapType$2, mapType$3, mapType$4, mapType$5, New;
 	bytes = $packages["bytes"];
 	fmt = $packages["fmt"];
-	common = $packages["github.com/spamguy/godip/common"];
+	common = $packages["github.com/zond/godip/common"];
 	Graph = $pkg.Graph = $newType(0, $kindStruct, "graph.Graph", "Graph", "github.com/spamguy/godip/graph", function(nodes_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -21851,10 +21824,9 @@ $packages["github.com/spamguy/godip/graph"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/spamguy/godip/state"] = (function() {
-	var $pkg = {}, $init, fmt, js, common, time, resolver, movement, State, sliceType, sliceType$1, ptrType, sliceType$2, ptrType$1, sliceType$3, ptrType$2, sliceType$4, ptrType$3, mapType, mapType$1, mapType$2, mapType$3, mapType$4, mapType$5, mapType$6, mapType$7, New;
+	var $pkg = {}, $init, fmt, common, time, resolver, movement, State, sliceType, sliceType$1, ptrType, sliceType$2, ptrType$1, sliceType$3, ptrType$2, sliceType$4, ptrType$3, mapType, mapType$1, mapType$2, mapType$3, mapType$4, mapType$5, mapType$6, mapType$7, New;
 	fmt = $packages["fmt"];
-	js = $packages["github.com/gopherjs/gopherjs/js"];
-	common = $packages["github.com/spamguy/godip/common"];
+	common = $packages["github.com/zond/godip/common"];
 	time = $packages["time"];
 	resolver = $pkg.resolver = $newType(0, $kindStruct, "state.resolver", "resolver", "github.com/spamguy/godip/state", function(State_, deps_, guesses_, resolving_) {
 		this.$val = this;
@@ -22047,7 +22019,7 @@ $packages["github.com/spamguy/godip/state"] = (function() {
 	resolver.prototype.Resolve = function(prov) { return this.$val.Resolve(prov); };
 	New = function(graph, phase, backupRule) {
 		var $ptr, backupRule, graph, phase;
-		return js.MakeWrapper(new State.ptr({}, {}, {}, {}, graph, phase, backupRule, false, {}, sliceType$2.nil, {}, {}));
+		return new State.ptr({}, {}, {}, {}, graph, phase, backupRule, false, {}, sliceType$2.nil, {}, {});
 	};
 	$pkg.New = New;
 	movement.ptr.prototype.prepare = function(s) {
@@ -22855,9 +22827,8 @@ $packages["github.com/spamguy/godip/state"] = (function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		$r = fmt.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = js.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = common.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = time.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = common.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = time.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
@@ -22887,8 +22858,8 @@ $packages["github.com/spamguy/godip/variant"] = (function() {
 	ptrType$1 = $ptrType(state.State);
 	funcType = $funcType([], [ptrType$1, $error], false);
 	New = function(o) {
-		var $ptr, o, x;
-		return new Variant.ptr($internalize(o.name, $String), $throwNilPointerError, $throwNilPointerError, graph.New((x = $assertType($internalize(o.regions, $emptyInterface), js.S), $subslice(new sliceType(x.$array), x.$offset, x.$offset + x.$length))));
+		var $ptr, o;
+		return new Variant.ptr($internalize(o.name, $String), $throwNilPointerError, $throwNilPointerError, graph.New($assertType($internalize(o.regions, $emptyInterface), sliceType)));
 	};
 	$pkg.New = New;
 	Variant.init([{prop: "Name", name: "Name", pkg: "", typ: $String, tag: ""}, {prop: "Start", name: "Start", pkg: "", typ: funcType, tag: ""}, {prop: "BlankStart", name: "BlankStart", pkg: "", typ: funcType, tag: ""}, {prop: "Graph", name: "Graph", pkg: "", typ: ptrType, tag: ""}]);
@@ -22904,19 +22875,20 @@ $packages["github.com/spamguy/godip/variant"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, $init, js, graph, state, variant, ptrType, funcType, mapType, sliceType, ptrType$1, funcType$1, ptrType$2, funcType$2, main;
+	var $pkg = {}, $init, js, graph, state, variant, ptrType, funcType, mapType, sliceType, ptrType$1, funcType$1, ptrType$2, ptrType$3, funcType$2, main;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	graph = $packages["github.com/spamguy/godip/graph"];
 	state = $packages["github.com/spamguy/godip/state"];
 	variant = $packages["github.com/spamguy/godip/variant"];
-	ptrType = $ptrType(js.Object);
-	funcType = $funcType([$packages["github.com/spamguy/godip/common"].Graph, $packages["github.com/spamguy/godip/common"].Phase, $packages["github.com/spamguy/godip/common"].BackupRule], [ptrType], false);
+	ptrType = $ptrType(state.State);
+	funcType = $funcType([$packages["github.com/zond/godip/common"].Graph, $packages["github.com/zond/godip/common"].Phase, $packages["github.com/zond/godip/common"].BackupRule], [ptrType], false);
 	mapType = $mapType($String, $emptyInterface);
 	sliceType = $sliceType($emptyInterface);
 	ptrType$1 = $ptrType(graph.Graph);
 	funcType$1 = $funcType([sliceType], [ptrType$1], false);
-	ptrType$2 = $ptrType(variant.Variant);
-	funcType$2 = $funcType([ptrType], [ptrType$2], false);
+	ptrType$2 = $ptrType(js.Object);
+	ptrType$3 = $ptrType(variant.Variant);
+	funcType$2 = $funcType([ptrType$2], [ptrType$3], false);
 	main = function() {
 		var $ptr;
 		$global.state = $externalize($makeMap($String.keyFor, [{ k: "New", v: new funcType(state.New) }]), mapType);
