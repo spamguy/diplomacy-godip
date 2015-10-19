@@ -1,6 +1,3 @@
-// set environment to 'test' to suppress logging
-//process.env.NODE_ENV = 'test';
-
 // This spec file parses the Diplomacy Adjudication Test Cases file and spits out one Jasmine unit test per item.
 var fs = require('fs'),
     path = require('path'),
@@ -11,7 +8,9 @@ var fs = require('fs'),
     _ = require('lodash'),
     winston = require('winston');
 
-var Judge = require('../godip');
+var Judge = require('../judge'),
+    UnitType = require('../js/unittype'),
+    OrderType = require('../js/ordertype');
 
 var variant = null,
     judge = null;
@@ -71,7 +70,7 @@ var itWrapper = function(fn, context, params) {
 };
 
 stream.on('error', function(err) {
-    log.error(err);
+    winston.error(err);
 });
 
 stream.on('data', function(line) {
@@ -90,16 +89,16 @@ stream.on('data', function(line) {
 
             var variantPath;
             if (process.env.TRAVIS)
-                variantPath = path.resolve(path.join('/home/travis/build/spamguy/diplomacy-judge', 'variants/' + match + '/' + match + '.json'));
+                variantPath = path.resolve(path.join('/home/travis/build/spamguy/diplomacy-godip', 'variants/' + match + '/' + match + '.json'));
             else
                 variantPath = path.resolve(path.join(__dirname, '../../../variants/' + match + '/' + match + '.json'));
 
-            log.info('Acquiring variant file at ' + variantPath);
+            winston.info('Acquiring variant file at ' + variantPath);
 
-            variant = JSON.parse(fs.readFileSync(variantPath), { encoding: 'utf8' }, function(err) { if (err) throw err; });
+            var variantData = JSON.parse(fs.readFileSync(variantPath), { encoding: 'utf8' });
 
-            // Instantiate judge.
-            judge = global.variant.New(variant);
+            // Set up Golang/JS bridge.
+            variant = global.variant.New(variantData);
         }
         else if (match = line.match(caseReg)) {
             currentSubstate = UnitTestSubstateType.TEST;
@@ -338,6 +337,6 @@ stream.on('end', function() {
         try {
         while (itQueue.length > 0)
             (itQueue.shift())();
-        } catch (ex) { log.error(ex); }
+        } catch (ex) { winston.error(ex); }
     });
 });

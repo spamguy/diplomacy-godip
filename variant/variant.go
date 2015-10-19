@@ -28,6 +28,6 @@ type Variant struct {
 func New(o *js.Object) *Variant {
 	return &Variant{
 		Name: o.Get("name").String(),
-		Graph: graph.New(o.Get("regions").Interface().(js.S)),
+		Graph: graph.New(o.Get("regions").Interface().([]interface {})),
 	}
 }
