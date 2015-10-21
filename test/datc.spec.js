@@ -48,9 +48,9 @@ var itQueue = [ ],              // queue up it()s to be run later
     beforePhaseData,
     expectedPhaseData,
     expectedResolvedPhaseData,
-    genericIt = function(l, judge, before, after) {
+    genericIt = function(l, state, before, after) {
         // process 'before' phase to produce an 'after'
-        var actualAfter = judge.process(before),
+        var actualAfter = state.Next(before),
             indexedActualAfter = _.indexBy(actualAfter.moves, 'r');
 
         // run the unit test
