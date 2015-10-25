@@ -48,7 +48,10 @@ var itQueue = [ ],              // queue up it()s to be run later
     beforePhaseData,
     expectedPhaseData,
     expectedResolvedPhaseData,
-    genericIt = function(l, state, before, after) {
+    genericIt = function(l, before, after) {
+        // Raw phase data + variant godip object = state godip object.
+        var state = global.state.New(variant, before);
+
         // process 'before' phase to produce an 'after'
         var actualAfter = state.Next(before),
             indexedActualAfter = _.indexBy(actualAfter.moves, 'r');
@@ -62,7 +65,7 @@ var itQueue = [ ],              // queue up it()s to be run later
         });
     };
 
-// wraps enqueued it() tests with correct params
+// Wraps enqueued it() tests with correct params.
 var itWrapper = function(fn, context, params) {
     return function() {
         fn.apply(context, params);
@@ -80,11 +83,11 @@ stream.on('data', function(line) {
     try {
         var match;
         if (match = line.match(clearCommentReg) || line === '') {
-            // do nothing
+            // Do nothing.
         }
         else if (match = line.match(variantReg)) {
             currentSubstate = UnitTestSubstateType.TEST;
-            // use match in the context of variant file names
+            // Use match in the context of variant file names.
             match = _.camelCase(match[1]);
 
             var variantPath;
@@ -98,7 +101,8 @@ stream.on('data', function(line) {
             var variantData = JSON.parse(fs.readFileSync(variantPath), { encoding: 'utf8' });
 
             // Set up Golang/JS bridge.
-            variant = global.variant.New(variantData);
+            //variant = global.variant.New(variantData);
+            variant = variantData;
         }
         else if (match = line.match(caseReg)) {
             currentSubstate = UnitTestSubstateType.TEST;
@@ -154,15 +158,15 @@ stream.on('data', function(line) {
         else if (line === 'END') {
             currentSubstate = UnitTestSubstateType.TEST;
 
-            // test has been built and can be run after the file has been processed
-            itQueue.push(itWrapper(genericIt, this, [itLabel, judge, beforePhaseData, expectedPhaseData]));
+            // Test has been built and can be run after the file has been processed.
+            itQueue.push(itWrapper(genericIt, this, [itLabel, beforePhaseData, expectedPhaseData]));
         }
         else {
-            // if none of the above apply, we must be in a substate of some sort
+            // If none of the above apply, we must be in a substate of some sort.
             switch (currentSubstate) {
                 case UnitTestSubstateType.PRESTATE_SUPPLYCENTER:
                     match = line.match(stateReg);
-                    var power = match[1][0], // only the first initial is relevant
+                    var power = match[1][0], // Only the first initial is relevant.
                         unitType = match[2],
                         region = match[3].toUpperCase(),
                         b;
@@ -326,7 +330,7 @@ stream.on('data', function(line) {
             }
         }
     } catch (ex) {
-        console.error('Failure processing line \'' + line + '\': ' + ex);
+        winston.error('Failure processing line \'' + line + '\': ' + ex);
         throw ex;
     }
 });
