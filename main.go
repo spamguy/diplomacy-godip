@@ -9,8 +9,7 @@ import (
 
 func main() {
     js.Global.Set("state", map[string]interface { } {
-        "New": state.New,
-        "Next": state.Next,
+        "NextFromJS": state.NextFromJS,
     })
 
     // js.Global.Set("variant", map[string]interface { } {

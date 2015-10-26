@@ -49,8 +49,8 @@ var itQueue = [ ],              // queue up it()s to be run later
     expectedPhaseData,
     expectedResolvedPhaseData,
     genericIt = function(l, before, after) {
-        // Raw phase data + variant godip object = state godip object.
-        var state = global.state.New(variant, before);
+        // Raw phase data + raw variant object = state godip object.
+        var state = global.state.NextFromJS(variant, before);
 
         // process 'before' phase to produce an 'after'
         var actualAfter = state.Next(before),
@@ -123,6 +123,7 @@ stream.on('data', function(line) {
 
             beforePhaseData.year = year;
             beforePhaseData.season = season;
+            beforePhaseData.seasonType = action;
         }
         else if (line === 'PRESTATE') {
             // enter prestate processing mode
