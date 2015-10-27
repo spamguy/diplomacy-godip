@@ -50,15 +50,25 @@ var itQueue = [ ],              // queue up it()s to be run later
     expectedResolvedPhaseData,
     genericIt = function(l, before, after) {
         // Raw phase data + raw variant object = state godip object.
-        var state = global.state.NextFromJS(variant, before);
+        var godipAfter = global.state.NextFromJS(variant, before);
 
-        // process 'before' phase to produce an 'after'
-        var actualAfter = state.Next(before),
-            indexedActualAfter = _.indexBy(actualAfter.moves, 'r');
+        // Convert godipAfter to actualAfter, indexed by region.
+        var indexedActualAfter = { };
 
-        // run the unit test
+        for (var u in godipAfter.Units()) {
+            var unit = godipAfter.Units()[u];
+            indexedActualAfter[u] = {
+                r: u,
+                unit: {
+                    power: unit.Nation[0],
+                    type: unit.Type === 'Fleet' ? 2 : 1
+                }
+            };
+        }
+
+        // Run the unit test.
         it(l, function() {
-            // compare this 'after' to the 'after' predicted by POSTSTATE
+            // Compare this 'after' to the 'after' predicted by POSTSTATE.
             for (var r = 0; r < after.moves.length; r++) {
                 expect(after.moves[r]).to.eql(indexedActualAfter[after.moves[r].r]);
             }
