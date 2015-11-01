@@ -36,7 +36,7 @@ var clearCommentReg = new RegExp(/^\s*#.*$/),
     caseReg = new RegExp(/^CASE\s+(.*)$/),
     prestateSetPhaseReg = new RegExp(/^PRESTATE_SETPHASE\s+(\S+)\s+(\d+),\s+(\S+)\s*$/),
     stateReg = new RegExp(/^([^:\s]+):?\s+(\S+)\s+(\S+)\s*$/),
-    ordersReg = new RegExp(/([^:]+):\s+\w\s+([\w\/]{3,6})\s*(-|\w*)\s*\w?\s*([\w\/]{3,6})?\s*(?:via [Cc]onvoy|[-H]?\s*([\w\/]{3,6})?)$/),
+    ordersReg = new RegExp(/([^:]+):\s+\w\s+([\w\/]{3,6})\s*(-|\w*)\s*(?:\w\s+)?([\w\/]{3,6})?\s*(?:via [Cc]onvoy|[-H]?\s*([\w\/]{3,6})?)$/),
     buildOrdersReg = new RegExp(/([^:]+):\s+(\w*)\s+(\w)?\s*([\w\/]{3,6})$/),
     preOrderReg = new RegExp(/^(SUCCESS|FAILURE):\s+([^:]+):\s+(.*)$/);
 
@@ -118,7 +118,7 @@ stream.on('data', function(line) {
             currentSubstate = UnitTestSubstateType.TEST;
             itLabel = match[1];
 
-            // start new old/expected phases to build
+            // Start new old/expected phases to build.
             beforePhaseData = { year: 1901, season: 1, moves: [ ] };
             expectedPhaseData = { year: 1901, season: 1, moves: [ ] };
 
@@ -160,7 +160,15 @@ stream.on('data', function(line) {
 
             // Clear orders in expectations, because order data will be scrubbed by the judge.
             for (var m = 0; m < expectedPhaseData.moves.length; m++) {
-                delete expectedPhaseData.moves[m].unit.order;
+                if (expectedPhaseData.moves[m].sr) {
+                    for (var sr = 0; sr < expectedPhaseData.moves[m].sr.length; sr++) {
+                        if (expectedPhaseData.moves[m].sr[sr].unit)
+                            delete expectedPhaseData.moves[m].sr[sr].unit.order;
+                    }
+                }
+
+                if (expectedPhaseData.moves[m].unit)
+                    delete expectedPhaseData.moves[m].unit.order;
             }
         }
         else if (line === 'POSTSTATE_DISLODGED') {
@@ -207,28 +215,43 @@ stream.on('data', function(line) {
                         b;
                     unitType = UnitType.toUnitType(unitType);
 
-                    var unitTemplate = _.pick({
-                        sr: region[1],
+                    var unitTemplate = {
                         type: unitType,
                         power: power,
                         order: {
                             // To be filled in at ORDERS state.
                         }
-                    }, _.identity);
+                    };
 
                     for (b = 0; b < beforePhaseData.moves.length; b++) {
                         if (beforePhaseData.moves[b].r === region[0]) {
-                            beforePhaseData.moves[b].unit = unitTemplate;
-                            break;
+                            if (region[1] && beforePhaseData.moves[b].sr) {
+                                for (var sr = 0; sr < beforePhaseData.moves[b].sr.length; sr++) {
+                                    if (region[1].toUpperCase() === beforePhaseData.moves[b].sr[sr].r.toUpperCase()) {
+                                        beforePhaseData.moves[b].sr[sr].unit = unitTemplate;
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                beforePhaseData.moves[b].unit = unitTemplate;
+                                break;
+                            }
                         }
                     }
 
                     // If no region found, push it.
                     if (b === beforePhaseData.moves.length) {
-                        beforePhaseData.moves.push({
-                            r: region[0],
-                            unit: unitTemplate
-                        });
+                        var newRegion = {
+                            r: region[0]
+                        };
+
+                        if (region[1])
+                            newRegion.sr = [ { r: region[1].toUpperCase(), unit: unitTemplate } ];
+                        else
+                            newRegion.unit = unitTemplate;
+
+                        beforePhaseData.moves.push(newRegion);
                     }
                     break;
 
@@ -244,61 +267,97 @@ stream.on('data', function(line) {
                     if (line.toUpperCase().indexOf('BUILD') > 0 || line.toUpperCase().indexOf('REMOVE') > 0) {
                         match = line.match(buildOrdersReg);
                         power = match[1][0];
-                        unitAction = match[2];
+                        unitAction = OrderType.toOrderType(match[2]);
                         unitType = match[3];
-                        unitLocation = match[4];
+                        unitLocation = match[4].toUpperCase().split(/[\/\.]/);
+                        var subregion = null;
 
                         // Province may have been defined in PRESTATE. Query moves first.
                         for (var r = 0; r < beforePhaseData.moves.length; r++) {
-                            if (beforePhaseData.moves[r].r === unitLocation.toUpperCase()) {
+                            if (beforePhaseData.moves[r].r === unitLocation[0].toUpperCase()) {
                                 order = beforePhaseData.moves[r];
+                                if (order.sr && unitLocation[1])
+                                    subregion = order.sr[unitLocation[1].toUpperCase()];
                                 break;
                             }
                         }
 
-                        if (!order) {
-                            order = {
-                                r: unitLocation.toUpperCase()
-                            };
-                            beforePhaseData.moves.push(order);
-                        }
-
-                        order.unit = {
-                            power: power,
-                            order: {
-                                action: OrderType.toOrderType(unitAction)
+                        // A power cannot build somewhere it doesn't own.
+                        // A power cannot disband something it doesn't own.
+                        if ((unitAction === 'build' && power === order.sc) ||
+                            (order && unitAction === 'disband' && power === order.unit.power)) {
+                            if (!order) {
+                                order = {
+                                    r: unitLocation[0].toUpperCase()
+                                };
+                                beforePhaseData.moves.push(order);
                             }
-                        };
 
-                        if (unitType)
-                            order.unit.order.type = UnitType.toUnitType(unitType);
+                            if (subregion) {
+                                order.sr = order.sr || [];
+                                var subregionOrder = {
+                                    r: unitLocation[1].toUpperCase(),
+                                    unit: {
+                                        power: power,
+                                        order: {
+                                            action: unitAction
+                                        }
+                                    }
+                                };
+
+                                if (unitType)
+                                    subregionOrder.unit.order.type = UnitType.toUnitType(unitType);
+
+                                order.sr.push(subregionOrder);
+                            }
+                            else {
+                                order.unit = {
+                                    power: power,
+                                    order: {
+                                        action: unitAction
+                                    }
+                                };
+
+                                if (unitType)
+                                    order.unit.order.type = UnitType.toUnitType(unitType);
+                            }
+                        }
+                        else {
+                            winston.debug('Ignoring line; power does not own unit or region: ' + line);
+                        }
                     }
                     else {
                         match = line.match(ordersReg);
-                        power = match[1][0]; // only the first initial is relevant
+                        power = match[1][0]; // Only the first initial is relevant.
                         unitLocation = match[2].toUpperCase().split(/[\/\.]/);
                         unitAction = match[3];
                         unitTarget = match[4];
-                        unitTargetTarget = match[5],
-                        b;
+                        unitTargetTarget = match[5];
 
                         if (unitTarget)
                             unitTarget = unitTarget.toUpperCase().split(/[\/\.]/);
                         if (unitTargetTarget)
                             unitTargetTarget = unitTargetTarget.toUpperCase().split(/[\/\.]/);
 
-                        // it is assumed a corresponding unit was declared in PRESTATE
-                        for (b = 0; b < beforePhaseData.moves.length; b++) {
+                        // It is assumed a corresponding unit was declared in PRESTATE.
+                        for (var b = 0; b < beforePhaseData.moves.length; b++) {
                             if (beforePhaseData.moves[b].r !== unitLocation[0])
                                 continue;
 
                             // TODO: after PRESTATE stuff is done, order should always exist
-                            beforePhaseData.moves[b].unit.power = power;
-                            beforePhaseData.moves[b].unit.order.action = OrderType.toOrderType(unitAction);
-                            if (beforePhaseData.moves[b].unit.order.action !== 'hold')
-                                beforePhaseData.moves[b].unit.order.y1 = unitTarget.join('.');
-                            if (unitTargetTarget) // i.e., target unit exists and is also not holding
-                                beforePhaseData.moves[b].unit.order.y2 = unitTargetTarget.join('.');
+
+                            // Only unit owners can command their units (!)
+                            if (beforePhaseData.moves[b].unit && beforePhaseData.moves[b].unit.power === power) {
+                                beforePhaseData.moves[b].unit.power = power;
+                                beforePhaseData.moves[b].unit.order.action = OrderType.toOrderType(unitAction);
+                                if (beforePhaseData.moves[b].unit.order.action !== 'hold')
+                                    beforePhaseData.moves[b].unit.order.y1 = unitTarget.join('/');
+                                if (unitTargetTarget) // i.e., target unit exists and is also not holding
+                                    beforePhaseData.moves[b].unit.order.y2 = unitTargetTarget.join('/');
+                            }
+                            else {
+                                winston.debug('Ignoring line; power does not own unit: ' + line);
+                            }
                             break;
                         }
                     }
@@ -311,25 +370,41 @@ stream.on('data', function(line) {
                         region = match[3].toUpperCase().split(/[\/\.]/),
                         b;
                     unitType = UnitType.toUnitType(unitType);
-                    var unitTemplate = _.pick({
-                        sr: region[1],
+                    var unitTemplate = {
                         type: unitType,
                         power: power
-                    }, _.identity);
+                    };
 
                     for (b = 0; b < expectedPhaseData.moves.length; b++) {
                         if (expectedPhaseData.moves[b].r === region[0]) {
-                            expectedPhaseData.unit = unitTemplate;
+                            if (region[1]) { // Append as subregion.
+                                expectedPhaseData.sr = expectedPhaseData.sr || [];
+                                for (var sr = 0; sr < expectedPhaseData.sr.length; sr++) {
+                                    if (expectedPhaseData.sr[sr].r === region[1]) {
+                                        expectedPhaseData.sr[sr].unit = unitTemplate;
+                                        break;
+                                    }
+                                }
+                            }
+                            else { // Append as region.
+                                expectedPhaseData.unit = unitTemplate;
+                            }
+
                             break;
                         }
                     }
 
-                    // if no region found, push it
+                    // if no region found, push it.
                     if (b === expectedPhaseData.moves.length) {
-                        expectedPhaseData.moves.push({
-                            r: region[0].toUpperCase(),
-                            unit: unitTemplate
-                        });
+                        var newRegion = {
+                            r: region[0].toUpperCase()
+                        };
+
+                        if (region[1])
+                            newRegion.sr = [ unitTemplate ];
+                        else
+                            newRegion.unit = unitTemplate;
+                        expectedPhaseData.moves.push(newRegion);
                     }
                     break;
 

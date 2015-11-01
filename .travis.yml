@@ -1,5 +1,9 @@
 language: node_js
 node_js:
   - '4.2.1'
+install:
+  - npm install -g mocha
+  - go get -u github.com/gopherjs/gopherjs
+  - gopherjs build
 before_script:
-    - git clone https://github.com/spamguy/diplomacy-variants.git variants
+  - git clone https://github.com/spamguy/diplomacy-variants.git variants
