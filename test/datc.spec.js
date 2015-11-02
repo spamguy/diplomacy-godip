@@ -56,21 +56,37 @@ var itQueue = [ ],              // queue up it()s to be run later
         var indexedActualAfter = { };
 
         for (var u in godipAfter.Units()) {
-            var unit = godipAfter.Units()[u];
-            indexedActualAfter[u] = {
-                r: u,
-                unit: {
+            var region = u.split(/[\/\.]/),
+                unit = godipAfter.Units()[u];
+            indexedActualAfter[region[0]] = {
+                r: region[0]
+            };
+
+            if (region[1]) {
+                indexedActualAfter[region[0]].sr = indexedActualAfter.sr || [ ];
+                indexedActualAfter[region[0]].sr.push({
+                    r: region[1],
+                    unit: {
+                        power: unit.Nation[0],
+                        type: unit.Type === 'Fleet' ? 2 : 1
+                    }
+                });
+            }
+            else {
+                indexedActualAfter[region[0]].unit = {
                     power: unit.Nation[0],
                     type: unit.Type === 'Fleet' ? 2 : 1
-                }
-            };
+                };
+            }
         }
 
         // Run the unit test.
         it(l, function() {
+            expect(indexedActualAfter).to.contain.keys(_.pluck(after.moves, 'r'));
+
             // Compare this 'after' to the 'after' predicted by POSTSTATE.
             for (var r = 0; r < after.moves.length; r++) {
-                expect(after.moves[r]).to.eql(indexedActualAfter[after.moves[r].r]);
+                expect(indexedActualAfter[after.moves[r].r]).to.eql(after.moves[r]);
             }
         });
     };
@@ -344,9 +360,24 @@ stream.on('data', function(line) {
                             if (beforePhaseData.moves[b].r !== unitLocation[0])
                                 continue;
 
-                            // TODO: after PRESTATE stuff is done, order should always exist
-
                             // Only unit owners can command their units (!)
+                            // TODO: Refactor such that subregions/regions use same code
+                            if (beforePhaseData.moves[b].sr && unitLocation[1]) {
+                                for (var sr = 0; sr < beforePhaseData.moves[b].sr.length; sr++) {
+                                    if (unitLocation[1] === beforePhaseData.moves[b].sr[sr].r) {
+                                        if (beforePhaseData.moves[b].sr[sr].unit && beforePhaseData.moves[b].sr[sr].unit.power === power) {
+                                            beforePhaseData.moves[b].sr[sr].unit.order.action = OrderType.toOrderType(unitAction);
+                                            if (beforePhaseData.moves[b].sr[sr].unit.order.action !== 'hold')
+                                                beforePhaseData.moves[b].sr[sr].unit.order.y1 = unitTarget.join('/');
+                                            if (unitTargetTarget) // i.e., target unit exists and is also not holding
+                                                beforePhaseData.moves[b].sr[sr].unit.order.y2 = unitTargetTarget.join('/');
+                                        }
+
+                                        break;
+                                    }
+                                }
+                            }
+
                             if (beforePhaseData.moves[b].unit && beforePhaseData.moves[b].unit.power === power) {
                                 beforePhaseData.moves[b].unit.power = power;
                                 beforePhaseData.moves[b].unit.order.action = OrderType.toOrderType(unitAction);
@@ -401,7 +432,7 @@ stream.on('data', function(line) {
                         };
 
                         if (region[1])
-                            newRegion.sr = [ unitTemplate ];
+                            newRegion.sr = [ { r: region[1], unit: unitTemplate } ];
                         else
                             newRegion.unit = unitTemplate;
                         expectedPhaseData.moves.push(newRegion);

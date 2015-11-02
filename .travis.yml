@@ -7,4 +7,6 @@ install:
   - go get github.com/spamguy/godip
   - gopherjs build
 before_script:
+  - mkdir golang
+  - export GOPATH=$HOME/golang
   - git clone https://github.com/spamguy/diplomacy-variants.git variants
