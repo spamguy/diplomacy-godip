@@ -10,3 +10,5 @@ install:
   - gopherjs build
 before_script:
   - git clone https://github.com/spamguy/diplomacy-variants.git variants
+script:
+  - mocha
