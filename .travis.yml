@@ -8,6 +8,7 @@ install:
   - npm install -g mocha
   - go get -u github.com/gopherjs/gopherjs
   - git clone https://github.com/spamguy/godip.git
+  - cd $HOME
   - gopherjs build
 before_script:
   - git clone https://github.com/spamguy/diplomacy-variants.git variants
