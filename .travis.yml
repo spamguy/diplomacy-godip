@@ -2,11 +2,11 @@ language: node_js
 node_js:
   - '4.2.1'
 install:
+  - export GOPATH=$HOME/golang
   - npm install -g mocha
   - go get -u github.com/gopherjs/gopherjs
   - go get github.com/spamguy/godip
   - gopherjs build
 before_script:
   - mkdir golang
-  - export GOPATH=$HOME/golang
   - git clone https://github.com/spamguy/diplomacy-variants.git variants
