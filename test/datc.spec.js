@@ -80,6 +80,14 @@ var itQueue = [ ],              // queue up it()s to be run later
             }
         }
 
+        for (var d in godipAfter.Dislodgeds()) {
+            var unit = godipAfter.Dislodgeds()[d];
+            indexedActualAfter[region[0]].dislodged = {
+                power: unit.Nation[0],
+                type: unit.Type === 'Fleet' ? 2 : 1
+            };
+        }
+
         // Run the unit test.
         it(l, function() {
             expect(indexedActualAfter).to.contain.keys(_.pluck(after.moves, 'r'));
@@ -440,6 +448,41 @@ stream.on('data', function(line) {
                     break;
 
                 case UnitTestSubstateType.POSTSTATE_DISLODGED:
+                    match = line.match(stateReg);
+                    var power = match[1][0], // only the first initial is relevant
+                        unitType = match[2],
+                        region = match[3].toUpperCase().split(/[\/\.]/),
+                        subregion = null;
+
+                        for (var b = 0; b < expectedPhaseData.moves.length; b++) {
+                            if (expectedPhaseData.moves[b].r === region[0]) {
+                                if (region[1]) {
+                                    expectedPhaseData.moves[b].sr = expectedPhaseData.moves[b].sr || [ ];
+                                    for (var sr = 0; sr < expectedPhaseData.moves[b].sr.length; sr++) {
+                                        if (region[1] === expectedPhaseData.moves[b].sr[sr].r) {
+                                            subregion = expectedPhaseData.moves[b].sr[sr];
+                                            break;
+                                        }
+                                    }
+
+                                    if (subregion) {
+                                        subregion.dislodged = {
+                                            power: power,
+                                            type: unitType
+                                        };
+                                    }
+                                }
+                                else {
+                                    expectedPhaseData.moves[b].dislodged = {
+                                        power: power,
+                                        type: UnitType.toUnitType(unitType)
+                                    };
+                                }
+
+                                break;
+                            }
+                        }
+
                     break;
 
                 case UnitTestSubstateType.POSTSTATE_RESULTS:
