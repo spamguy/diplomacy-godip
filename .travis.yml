@@ -2,9 +2,12 @@ language: go
 go:
   - 1.5.1
 install:
+  - mkdir $GOPATH/github.com
+  - mkdir $GOPATH/spamguy
+  - cd $GOPATH/github.com/spamguy
   - npm install -g mocha
   - go get -u github.com/gopherjs/gopherjs
-  - go get -d github.com/spamguy/godip
+  - git clone https://github.com/spamguy/godip.git
   - gopherjs build
 before_script:
   - git clone https://github.com/spamguy/diplomacy-variants.git variants
