@@ -3,7 +3,7 @@ go:
   - 1.5.1
 install:
   - mkdir $GOPATH/github.com
-  - mkdir $GOPATH/spamguy
+  - mkdir $GOPATH/github.com/spamguy
   - cd $GOPATH/github.com/spamguy
   - npm install -g mocha
   - go get -u github.com/gopherjs/gopherjs
