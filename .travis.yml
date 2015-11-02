@@ -4,6 +4,7 @@ go:
 install:
   - cd $HOME/gopath/src/github.com/spamguy
   - npm install -g mocha
+  - npm install
   - go get -u github.com/gopherjs/gopherjs
   - git clone https://github.com/spamguy/godip.git
   - cd $TRAVIS_BUILD_DIR
