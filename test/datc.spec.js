@@ -90,7 +90,7 @@ var itQueue = [ ],              // queue up it()s to be run later
 
         // Run the unit test.
         it(l, function() {
-            expect(indexedActualAfter).to.contain.keys(_.pluck(after.moves, 'r'));
+            expect(indexedActualAfter).to.have.all.keys(_.pluck(after.moves, 'r'));
 
             // Compare this 'after' to the 'after' predicted by POSTSTATE.
             for (var r = 0; r < after.moves.length; r++) {
