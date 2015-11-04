@@ -7,9 +7,8 @@ install:
   - go get -u github.com/gopherjs/gopherjs
   - git clone https://github.com/spamguy/godip.git
   - cd $TRAVIS_BUILD_DIR
+  - git clone https://github.com/spamguy/diplomacy-variants.git variants
   - npm install
   - gopherjs build
-before_script:
-  - git clone https://github.com/spamguy/diplomacy-variants.git variants
 script:
   - mocha
