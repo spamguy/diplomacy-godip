@@ -8,7 +8,7 @@ var fs = require('fs'),
     _ = require('lodash'),
     winston = require('winston');
 
-var Judge = require('../judge'),
+var Judge = require('../diplomacy-godip'),
     UnitType = require('../js/unittype'),
     OrderType = require('../js/ordertype');
 
@@ -90,7 +90,7 @@ var itQueue = [ ],              // queue up it()s to be run later
 
         // Run the unit test.
         it(l, function() {
-            expect(indexedActualAfter).to.have.all.keys(_.pluck(after.moves, 'r'));
+            expect(indexedActualAfter).to.contain.all.keys(_.pluck(after.moves, 'r'));
 
             // Compare this 'after' to the 'after' predicted by POSTSTATE.
             for (var r = 0; r < after.moves.length; r++) {
