@@ -1,4 +1,4 @@
-diplomacy-godip
+# diplomacy-godip [![Build Status](https://travis-ci.org/spamguy/diplomacy-godip.svg?branch=master)](https://travis-ci.org/spamguy/diplomacy-godip)
 =====
 
 This is a NodeJS adjudication service for Diplomacy. It implements a fork of [zond/godip](https://www.github.com/spamguy/godip) modified to be JavaScript-friendly. This judge in turn fuels the dipl.io project at [spamguy/diplomacy](https://www.github.com/spamguy/diplomacy).
