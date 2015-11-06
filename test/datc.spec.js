@@ -49,6 +49,19 @@ var itQueue = [ ],              // queue up it()s to be run later
     expectedPhaseData,
     expectedResolvedPhaseData,
     genericIt = function(l, before, after) {
+        // Scrub 'before' of moves already invalidated.
+        // Godip would not display their results, making it look like data disappeared.
+        var scrubbedRegions = _.pluck(_.remove(
+            before.moves,
+            function(r) {
+                return !_.some(r.sr, 'unit.order.action') &&
+                    (!r.unit || !r.unit.order.action);
+            }), 'r');
+
+        // Scrub 'after' too.
+        for (var a = 0; a < scrubbedRegions.length; a++)
+            _.remove(after.moves, 'r', scrubbedRegions[a].r);
+
         // Raw phase data + raw variant object = state godip object.
         var godipAfter = global.state.NextFromJS(variant, before);
 
@@ -90,7 +103,9 @@ var itQueue = [ ],              // queue up it()s to be run later
 
         // Run the unit test.
         it(l, function() {
-            expect(indexedActualAfter).to.contain.all.keys(_.pluck(after.moves, 'r'));
+            // This test will fail if there are no keys.
+            if (after.moves.length > 0)
+                expect(indexedActualAfter).to.contain.all.keys(_.pluck(after.moves, 'r'));
 
             // Compare this 'after' to the 'after' predicted by POSTSTATE.
             for (var r = 0; r < after.moves.length; r++) {
@@ -111,7 +126,7 @@ stream.on('error', function(err) {
 });
 
 stream.on('data', function(line) {
-    // strip whitespace and comments
+    // Strip whitespace and comments.
     line = line.split('#')[0].trim();
 
     try {
@@ -222,7 +237,7 @@ stream.on('data', function(line) {
                         }
                     }
 
-                    // if no region found, push it
+                    // If no region found, push it.
                     if (b === beforePhaseData.moves.length) {
                         beforePhaseData.moves.push({
                             r: region,
