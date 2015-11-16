@@ -95,7 +95,13 @@ var itQueue = [ ],              // queue up it()s to be run later
 
         for (var d in godipAfter.Dislodgeds()) {
             var unit = godipAfter.Dislodgeds()[d];
-            indexedActualAfter[region[0]].dislodged = {
+            if (!indexedActualAfter[d]) {
+                indexedActualAfter[d] = {
+                    r: d
+                }
+            }
+            
+            indexedActualAfter[d].dislodged = {
                 power: unit.Nation[0],
                 type: unit.Type === 'Fleet' ? 2 : 1
             };
